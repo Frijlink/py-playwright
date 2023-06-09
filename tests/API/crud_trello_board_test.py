@@ -12,7 +12,15 @@ assert API_URL, "API_URL is not set"
 assert API_KEY, "API_KEY is not set"
 assert API_TOKEN, "API_TOKEN is not set"
 
+member_id = ""
 organization_id = ""
+board_id = ""
+boardName = str(uuid.uuid4())
+updatedBoardName = str(uuid.uuid4())
+backgroundColour = "purple"
+updatedBackgroundColour = "blue"
+visibility = "org"
+updatedVisibility = "private"
 
 
 @pytest.fixture(scope="session")
@@ -33,7 +41,13 @@ def api_request_context(
 def delete_boards_after_test(
     api_request_context: APIRequestContext,
 ) -> Generator[None, None, None]:
+    global member_id
+    global organization_id
     # Before all
+    member_id = api_request_context.get(
+        f"/1/tokens/{API_TOKEN}?key={API_KEY}&token={API_TOKEN}").json()["idMember"]
+    organization_id = api_request_context.get(
+        f"/1/members/{member_id}/organizations?key={API_KEY}&token={API_TOKEN}").json()[0]["id"]
     yield
     # After all
     boards = api_request_context.get(
@@ -45,26 +59,36 @@ def delete_boards_after_test(
     assert delete_board.ok
 
 
-def test_crud_trello_board_through_api(api_request_context: APIRequestContext) -> None:
-    boardName = str(uuid.uuid4())
-    updatedBoardName = str(uuid.uuid4())
-    backgroundColour = "purple"
-    updatedBackgroundColour = "pink"
-    visibility = "org"
-    updatedVisibility = "private"
+def test_should_create_board_through_api(api_request_context: APIRequestContext) -> None:
+    global board_id
 
-    member_id = api_request_context.get(
-        f"/1/tokens/{API_TOKEN}?key={API_KEY}&token={API_TOKEN}").json()["idMember"]
-    organization_id = api_request_context.get(
-        f"/1/members/{member_id}/organizations?key={API_KEY}&token={API_TOKEN}").json()[0]["id"]
-
-    # Create board
+    data = {
+        "name": boardName,
+        "key": API_KEY,
+        "token": API_TOKEN,
+        "prefs_background":  backgroundColour,
+        "prefs_permissionLevel": visibility,
+    }
     url = f"{API_URL}/1/boards/"
-    response = api_request_context.post(url, params=create_create_body(
-        boardName, API_KEY, API_TOKEN, backgroundColour, visibility))
-    response_body = response.json()
-
+    response = api_request_context.post(url, params=data)
     assert response.ok
+
+    response_body = response.json()
+    assert response_body["idOrganization"] == organization_id
+    assert response_body["name"] == boardName
+    assert response_body["closed"] == False
+    assert response_body["prefs"]["background"] == backgroundColour
+    assert response_body["prefs"]["permissionLevel"] == visibility
+
+    board_id = response_body["id"]
+
+
+def test_should_read_board_through_api(api_request_context: APIRequestContext) -> None:
+    response = api_request_context.get(
+        f"/1/boards/{board_id}?key={API_KEY}&token={API_TOKEN}")
+    assert response.ok
+
+    response_body = response.json()
     assert response_body["idOrganization"] == organization_id
     assert response_body["name"] == boardName
     assert response_body["closed"] == False
@@ -72,11 +96,36 @@ def test_crud_trello_board_through_api(api_request_context: APIRequestContext) -
     assert response_body["prefs"]["permissionLevel"] == visibility
 
 
-def create_create_body(name, api_key, api_token, colour, visibility):
-    return {
-        "name": name,
-        "key": api_key,
-        "token": api_token,
-        "prefs_background":  colour,
-        "prefs_permissionLevel": visibility,
+def test_should_update_board_through_api(api_request_context: APIRequestContext) -> None:
+    data = {
+        "name": updatedBoardName,
+        "key": API_KEY,
+        "token": API_TOKEN,
+        "prefs/background":  updatedBackgroundColour,
+        "prefs/permissionLevel": updatedVisibility,
     }
+    response = api_request_context.put(f"/1/boards/{board_id}", params=data)
+    assert response.ok
+
+    response_body = response.json()
+    assert response_body["idOrganization"] == organization_id
+    assert response_body["name"] == updatedBoardName
+    assert response_body["closed"] == False
+    assert response_body["prefs"]["background"] == updatedBackgroundColour
+    assert response_body["prefs"]["permissionLevel"] == updatedVisibility
+
+def test_should_close_board_through_api(api_request_context: APIRequestContext) -> None:
+    data = {
+        "key": API_KEY,
+        "token": API_TOKEN,
+        "closed": "true"
+    }
+    response = api_request_context.put(f"/1/boards/{board_id}", params=data)
+    assert response.ok
+
+    response = api_request_context.get(
+        f"/1/boards/{board_id}?key={API_KEY}&token={API_TOKEN}")
+    assert response.ok
+
+    response_body = response.json()
+    assert response_body["closed"] == True
