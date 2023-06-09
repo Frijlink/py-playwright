@@ -1,8 +1,5 @@
-import uuid
-import os
+import uuid, os, pytest
 from typing import Generator
-
-import pytest
 from playwright.sync_api import Playwright, APIRequestContext
 
 API_URL = os.getenv("API_URL")
@@ -15,12 +12,12 @@ assert API_TOKEN, "API_TOKEN is not set"
 member_id = ""
 organization_id = ""
 board_id = ""
-boardName = str(uuid.uuid4())
-updatedBoardName = str(uuid.uuid4())
-backgroundColour = "purple"
-updatedBackgroundColour = "blue"
+board_name = str(uuid.uuid4())
+updated_board_name = str(uuid.uuid4())
+background_colour = "purple"
+updated_background_colour = "blue"
 visibility = "org"
-updatedVisibility = "private"
+updated_visibility = "private"
 
 
 @pytest.fixture(scope="session")
@@ -63,10 +60,10 @@ def test_should_create_board_through_api(api_request_context: APIRequestContext)
     global board_id
 
     data = {
-        "name": boardName,
+        "name": board_name,
         "key": API_KEY,
         "token": API_TOKEN,
-        "prefs_background":  backgroundColour,
+        "prefs_background":  background_colour,
         "prefs_permissionLevel": visibility,
     }
     url = f"{API_URL}/1/boards/"
@@ -75,9 +72,9 @@ def test_should_create_board_through_api(api_request_context: APIRequestContext)
 
     response_body = response.json()
     assert response_body["idOrganization"] == organization_id
-    assert response_body["name"] == boardName
+    assert response_body["name"] == board_name
     assert response_body["closed"] == False
-    assert response_body["prefs"]["background"] == backgroundColour
+    assert response_body["prefs"]["background"] == background_colour
     assert response_body["prefs"]["permissionLevel"] == visibility
 
     board_id = response_body["id"]
@@ -90,29 +87,29 @@ def test_should_read_board_through_api(api_request_context: APIRequestContext) -
 
     response_body = response.json()
     assert response_body["idOrganization"] == organization_id
-    assert response_body["name"] == boardName
+    assert response_body["name"] == board_name
     assert response_body["closed"] == False
-    assert response_body["prefs"]["background"] == backgroundColour
+    assert response_body["prefs"]["background"] == background_colour
     assert response_body["prefs"]["permissionLevel"] == visibility
 
 
 def test_should_update_board_through_api(api_request_context: APIRequestContext) -> None:
     data = {
-        "name": updatedBoardName,
+        "name": updated_board_name,
         "key": API_KEY,
         "token": API_TOKEN,
-        "prefs/background":  updatedBackgroundColour,
-        "prefs/permissionLevel": updatedVisibility,
+        "prefs/background":  updated_background_colour,
+        "prefs/permissionLevel": updated_visibility,
     }
     response = api_request_context.put(f"/1/boards/{board_id}", params=data)
     assert response.ok
 
     response_body = response.json()
     assert response_body["idOrganization"] == organization_id
-    assert response_body["name"] == updatedBoardName
+    assert response_body["name"] == updated_board_name
     assert response_body["closed"] == False
-    assert response_body["prefs"]["background"] == updatedBackgroundColour
-    assert response_body["prefs"]["permissionLevel"] == updatedVisibility
+    assert response_body["prefs"]["background"] == updated_background_colour
+    assert response_body["prefs"]["permissionLevel"] == updated_visibility
 
 def test_should_close_board_through_api(api_request_context: APIRequestContext) -> None:
     data = {
