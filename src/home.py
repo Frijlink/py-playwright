@@ -1,6 +1,6 @@
 import os
 
-URL = os.getenv("BASE_URL")
+URL = os.getenv('BASE_URL')
 
 class HomePage:
     def __init__(self, page):
@@ -20,11 +20,11 @@ class HomePage:
 
     def create_new_board(self, name, background_colour):
         self.new_board_btn.click()
-        self.page.locator(f"button[title=\"{background_colour}\"]").click()
+        self.page.locator(f'button[title="{background_colour}"]').click()
         self.new_board_name_input.type(name, delay=50)
-        self.create_new_board_submit_btn.wait_for(state="attached")
+        self.create_new_board_submit_btn.wait_for(state='attached')
         self.create_new_board_submit_btn.click()
-        self.page.wait_for_url(f"**/{name.lower()}")
+        self.page.wait_for_url(f'**/{name.lower()}')
 
     def get_all_board_names(self):
         return self.board_tile_title.all_inner_texts() if (self.board_tile_title.is_visible()) else []

@@ -16,13 +16,13 @@ workspace = None
 board_name = str(uuid.uuid4())
 updated_board_name = str(uuid.uuid4())
 
-@pytest.fixture(scope="function", autouse=True)
+@pytest.fixture(scope='function', autouse=True)
 def before_each_after_each(playwright):
     global page
+    global board
     global home
     global header
     global login
-    global board
     global workspace
     # Before each
     firefox = playwright.firefox
@@ -37,18 +37,18 @@ def before_each_after_each(playwright):
     home.goto()
     header.login_btn.click()
     login.login(
-        os.getenv("USER_NAME"),
-        os.getenv("PASSWORD")
+        os.getenv('USER_NAME'),
+        os.getenv('PASSWORD')
     )
     yield
-    print("afterEach")
+    # here can come an After each part
 
 def test_should_create_update_and_delete_board_through_ui():
     home.section_header.wait_for()
-    expect(home.section_header).to_contain_text("YOUR WORKSPACES")
+    expect(home.section_header).to_contain_text('YOUR WORKSPACES')
 
     # create board
-    home.create_new_board(board_name, "🌈")
+    home.create_new_board(board_name, '🌈')
 
     board.wait_for_page_loaded()
     workspace.nav.wait_for()
@@ -63,14 +63,13 @@ def test_should_create_update_and_delete_board_through_ui():
     # close board
     workspace.close_current_board()
 
-    expect(board.close_board_message).to_contain_text(f"{updated_board_name} is closed.")
+    expect(board.close_board_message).to_contain_text(f'{updated_board_name} is closed.')
 
     # delete board
     board.delete_board()
 
-    expect(home.section_header).to_contain_text("YOUR WORKSPACES")
+    expect(home.section_header).to_contain_text('YOUR WORKSPACES')
 
     board_names = home.get_all_board_names()
     if (len(board_names) > 0):
         expect().not_to_contain_text(updated_board_name)
-
