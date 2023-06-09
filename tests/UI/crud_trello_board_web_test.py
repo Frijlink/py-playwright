@@ -1,11 +1,11 @@
 import re, pytest, os, uuid
 
-from playwright.sync_api import Page, expect
-from src.board import BoardPage
-from src.home import HomePage
-from src.login import LoginPage
-from src.components.header import HeaderComponent
-from src.components.workspace_nav import WorkspaceNavComponent
+from playwright.sync_api import expect
+from src.pages.board import BoardPage
+from src.pages.home import HomePage
+from src.pages.login import LoginPage
+from src.pages.components.header import HeaderComponent
+from src.pages.components.workspace_nav import WorkspaceNavComponent
 
 page = None
 board = None
