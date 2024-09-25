@@ -1,13 +1,15 @@
 class BoardPage:
     def __init__(self, page):
         self.page = page
-        self.main_title = page.locator('[data-testid="board-name-display"]')
-        self.board_name_input = page.locator('[data-testid="board-name-input"]')
+        self.main_title = page.get_by_test_id('board-name-display')
+        self.board_name_input = page.get_by_test_id('board-name-input')
         self.board = page.locator('#board')
-        self.left_menu = page.locator('[data-testid="workspace-boards-and-views-lists"]')
-        self.close_board_message = page.locator('[data-testid="close-board-big-message"]')
-        self.delete_board_btn = page.locator('[data-testid="close-board-delete-board-button"]')
-        self.delete_board_confirm_btn = page.locator('[data-testid="close-board-delete-board-confirm-button"]')
+        self.left_menu = page.get_by_test_id('workspace-boards-and-views-lists')
+        self.board_menu = page.get_by_label('Show menu')
+        self.close_board_message = page.locator('#content-wrapper p')
+        self.delete_board_btn = page.get_by_test_id('close-board-delete-board-button')
+        self.delete_board_confirm_btn = page.get_by_test_id('close-board-delete-board-confirm-button')
+        self.trello_btn = page.get_by_label('Back to home')
 
     def wait_for_page_loaded(self):
         self.board.wait_for()
@@ -20,5 +22,6 @@ class BoardPage:
         self.page.keyboard.press("Enter")
 
     def delete_board(self):
+        self.board_menu.click()
         self.delete_board_btn.click()
         self.delete_board_confirm_btn.click()

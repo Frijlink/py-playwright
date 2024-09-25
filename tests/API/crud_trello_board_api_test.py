@@ -19,7 +19,6 @@ updated_background_colour = 'blue'
 visibility = 'org'
 updated_visibility = 'private'
 
-
 @pytest.fixture(scope='session')
 def api_request_context(
     playwright: Playwright,
@@ -32,7 +31,6 @@ def api_request_context(
     )
     yield request_context
     request_context.dispose()
-
 
 @pytest.fixture(scope='session', autouse=True)
 def delete_boards_after_test(
@@ -54,7 +52,6 @@ def delete_boards_after_test(
         delete_board = api_request_context.delete(
             f'/1/boards/{id}?key={API_KEY}&token={API_TOKEN}')
     assert delete_board.ok
-
 
 def test_should_create_board_through_api(api_request_context: APIRequestContext) -> None:
     global board_id
@@ -79,7 +76,6 @@ def test_should_create_board_through_api(api_request_context: APIRequestContext)
 
     board_id = response_body['id']
 
-
 def test_should_read_board_through_api(api_request_context: APIRequestContext) -> None:
     response = api_request_context.get(
         f'/1/boards/{board_id}?key={API_KEY}&token={API_TOKEN}')
@@ -91,7 +87,6 @@ def test_should_read_board_through_api(api_request_context: APIRequestContext) -
     assert response_body['closed'] == False
     assert response_body['prefs']['background'] == background_colour
     assert response_body['prefs']['permissionLevel'] == visibility
-
 
 def test_should_update_board_through_api(api_request_context: APIRequestContext) -> None:
     data = {

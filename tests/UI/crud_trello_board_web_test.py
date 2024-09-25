@@ -63,11 +63,12 @@ def test_should_create_update_and_delete_board_through_ui():
     # close board
     workspace.close_current_board()
 
-    expect(board.close_board_message).to_contain_text(f'{updated_board_name} is closed.')
+    expect(board.close_board_message).to_contain_text('This board is closed. Reopen the board to make changes.')
 
     # delete board
     board.delete_board()
 
+    board.trello_btn.click()
     expect(home.section_header).to_contain_text('YOUR WORKSPACES')
 
     board_names = home.get_all_board_names()
