@@ -6,13 +6,13 @@ class HomePage:
     def __init__(self, page):
         self.page = page
         self.section_header = page.locator('h3.boards-page-section-header-name')
-        self.new_board_btn = page.locator('[data-testid="create-board-tile"]')
-        self.new_board_name_input = page.locator('[data-testid="create-board-title-input"]')
+        self.new_board_btn = page.get_by_test_id('create-board-tile')
+        self.new_board_name_input = page.get_by_test_id('create-board-title-input')
         self.select_visibility_dropdown = page.locator('[id$="create-board-select-visibility"] > div > div > div:nth-child(1)')
         self.visibility_private_btn = page.locator('#react-select-4-option-0 li')
         self.visibility_workspace_btn = page.locator('#react-select-4-option-1 li')
         self.visibility_public_btn = page.locator('#react-select-4-option-2 li')
-        self.create_new_board_submit_btn = page.locator('[data-testid="create-board-submit-button"]')
+        self.create_new_board_submit_btn = page.get_by_test_id('create-board-submit-button')
         self.board_tile_title = page.locator('.board-tile-details-name')
 
     def goto(self):
