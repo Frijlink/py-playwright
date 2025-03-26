@@ -1,7 +1,9 @@
 import uuid, os, pytest
 from typing import Generator
+from dotenv import load_dotenv
 from playwright.sync_api import Playwright, APIRequestContext
 
+load_dotenv()
 API_URL = os.getenv('API_URL')
 API_KEY = os.getenv('TRELLO_API_KEY')
 API_TOKEN = os.getenv('TRELLO_API_TOKEN')

@@ -1,11 +1,14 @@
 import re, pytest, os, uuid
 
+from dotenv import load_dotenv
 from playwright.sync_api import expect
 from src.pages.board import BoardPage
 from src.pages.home import HomePage
 from src.pages.login import LoginPage
 from src.pages.components.header import HeaderComponent
 from src.pages.components.workspace_nav import WorkspaceNavComponent
+
+load_dotenv()
 
 page = None
 board = None
@@ -44,7 +47,6 @@ def before_each_after_each(playwright):
     # here can come an After each part
 
 def test_should_create_update_and_delete_board_through_ui():
-    home.section_header.wait_for()
     expect(home.section_header).to_contain_text('YOUR WORKSPACES')
 
     # create board
@@ -55,7 +57,7 @@ def test_should_create_update_and_delete_board_through_ui():
 
     expect(board.main_title).to_contain_text(board_name)
 
-    #u pdate board
+    # update board
     board.update_board_name(updated_board_name)
 
     expect(board.main_title).to_contain_text(updated_board_name)
