@@ -10,3 +10,4 @@ class LoginPage:
         self.login_submit_btn.click()
         self.password_input.fill(password)
         self.login_submit_btn.click()
+        self.login_submit_btn.wait_for(state = 'hidden')

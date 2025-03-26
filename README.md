@@ -8,7 +8,8 @@ Playwright POC in Python
 ## How do I get set up? ##
 - Install Playwright for python with `pip install pytest-playwright`
 - Install the drivers with `playwright install`
-- Set the necessary environment variables:
+- Install dotenv with `pip install python-dotenv`
+- Set the necessary environment variables in `.env`
 
 | Variable         | Content                |
 |------------------|------------------------|
